@@ -24,18 +24,20 @@ public class CdcConfiguration {
                 .with("database.user", configuration.getUser())
                 .with("database.password", configuration.getPassword())
                 .with("database.dbname", configuration.getDbname())
-                .with("database.include.list", configuration.getDbname())
                 .with("table.include.list", configuration.getTablesToTrack())
+                .with("table.whitelist", configuration.getTablesToTrack())
                 .with("database.names", configuration.getDbname())
-                .with("database.history", "io.debezium.relational.history.FileDatabaseHistory")
-                .with("database.history.file.filename", configuration.getHistoryFile())
+                .with("schema.history.internal", "io.debezium.storage.file.history.FileSchemaHistory")
+                .with("schema.history.internal.file.filename", configuration.getHistoryFile())
+                .with("topic.prefix", "omega")
+                .with("snapshot.mode", "schema_only")
 
                 // May be worth to be moved to configuration
                 .with("name", "omega-mssql-connector")
                 .with("offset.flush.interval.ms", "60000")
                 .with("include.schema.changes", "false")
                 .with("database.server.id", "10181")
-                .with("database.server.name", "omega-mssql-db-server")
+                .with("database.server.name", "omega_mssql_db_server")
 
                 // Disable encryption
                 .with("database.encrypt", "false")

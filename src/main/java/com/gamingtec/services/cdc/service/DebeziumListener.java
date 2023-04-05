@@ -33,7 +33,6 @@ public class DebeziumListener {
     private final Executor executor = Executors.newSingleThreadExecutor();
 
     public DebeziumListener(Configuration debeziumConfiguration) {
-
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(debeziumConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
@@ -47,7 +46,10 @@ public class DebeziumListener {
 
     private void handleChangeEvent(RecordChangeEvent<SourceRecord> sourceRecordRecordChangeEvent) {
 
+        log.info("Event: {}", sourceRecordRecordChangeEvent);
+
         SourceRecord sourceRecord = sourceRecordRecordChangeEvent.record();
+
         Struct sourceRecordChangeValue= (Struct) sourceRecord.value();
 
         if (sourceRecordChangeValue != null) {
