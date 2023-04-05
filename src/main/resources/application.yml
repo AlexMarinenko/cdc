@@ -1,6 +1,11 @@
 debezium:
   database:
     host: ${DB_HOST}
+    port: ${DB_PORT:1433}
     user: ${DB_USER}
     password: ${DB_PASSWORD}
     dbname: ${DB_NAME}
+    tables-to-track: ${TABLES_TO_TRACK}
+    offset-file: ${OFFSET_FILE:/tmp/offset.dat}
+    history-file: ${HISTORY_FILE:/tmp/dbhistory.dat}
+

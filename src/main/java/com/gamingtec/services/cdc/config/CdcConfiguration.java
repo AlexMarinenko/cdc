@@ -16,29 +16,41 @@ public class CdcConfiguration {
     public io.debezium.config.Configuration customerConnector() {
         log.info("CDC Configuration: {}", configuration );
         return io.debezium.config.Configuration.create()
-                .with("name", "omega-mssql-connector")
                 .with("connector.class", "io.debezium.connector.sqlserver.SqlServerConnector")
                 .with("offset.storage", "org.apache.kafka.connect.storage.FileOffsetBackingStore")
-                .with("offset.storage.file.filename", "/tmp/offsets.dat")
-                .with("offset.flush.interval.ms", "60000")
+                .with("offset.storage.file.filename", configuration.getOffsetFile())
                 .with("database.hostname", configuration.getHost())
-                //.with("database.port", customerDbPort)
+                .with("database.port", configuration.getPort())
                 .with("database.user", configuration.getUser())
                 .with("database.password", configuration.getPassword())
                 .with("database.dbname", configuration.getDbname())
                 .with("database.include.list", configuration.getDbname())
-                .with("table.include.list", "admin_all.REGISTRY_HASH")
+                .with("table.include.list", configuration.getTablesToTrack())
                 .with("database.names", configuration.getDbname())
-                .with("database.encrypt", "false")
-                .with("topic.prefix", "omega")
+                .with("database.history", "io.debezium.relational.history.FileDatabaseHistory")
+                .with("database.history.file.filename", configuration.getHistoryFile())
+
+                // May be worth to be moved to configuration
+                .with("name", "omega-mssql-connector")
+                .with("offset.flush.interval.ms", "60000")
                 .with("include.schema.changes", "false")
                 .with("database.server.id", "10181")
                 .with("database.server.name", "omega-mssql-db-server")
-                .with("database.history", "io.debezium.relational.history.FileDatabaseHistory")
-                .with("database.history.file.filename", "/tmp/dbhistory.dat")
 
-                .with("schema.history.internal.kafka.topic", "history-topic")
-                .with("schema.history.internal.kafka.bootstrap.servers", "localhost:9092")
+                // Disable encryption
+                .with("database.encrypt", "false")
+
+                // Certificates settings if encryption is on
+                // -----------------------------------------
+                // .with("database.ssl.truststore": "path/to/trust-store")
+                // .with("database.ssl.truststore.password": "password-for-trust-store")
+
+                // For newer versions of debezium. Kafka engine only.
+                // --------------------------------------------------
+                //.with("topic.prefix", "omega")
+                //.with("schema.history.internal.kafka.topic", "history-topic")
+                //.with("schema.history.internal.kafka.bootstrap.servers", "localhost:9092")
+
                 .build();
     }
 

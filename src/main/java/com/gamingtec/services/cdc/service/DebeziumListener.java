@@ -46,7 +46,7 @@ public class DebeziumListener {
     }
 
     private void handleChangeEvent(RecordChangeEvent<SourceRecord> sourceRecordRecordChangeEvent) {
-        log.info("New event: {}", sourceRecordRecordChangeEvent);
+
         SourceRecord sourceRecord = sourceRecordRecordChangeEvent.record();
         Struct sourceRecordChangeValue= (Struct) sourceRecord.value();
 
@@ -61,8 +61,7 @@ public class DebeziumListener {
                         .filter(fieldName -> struct.get(fieldName) != null)
                         .map(fieldName -> Pair.of(fieldName, struct.get(fieldName)))
                         .collect(toMap(Pair::getFirst, Pair::getSecond));
-
-                log.info("Payload received: {}", payload);
+                log.info("Operation: {}, Payload: {}", operation, payload);
             }
         }
     }

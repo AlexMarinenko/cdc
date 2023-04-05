@@ -7,8 +7,12 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "debezium.database")
 public class ConnectorConfiguration {
     private String host;
+    private int port;
     private String user;
     private String password;
     private String dbname;
+    private String tablesToTrack;
+    private String offsetFile;
+    private String historyFile;
 }
 
