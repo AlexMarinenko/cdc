@@ -6,6 +6,3 @@ debezium:
     password: ${DB_PASSWORD}
     dbname: ${DB_NAME}
     tables-to-track: ${TABLES_TO_TRACK}
-    offset-file: ${OFFSET_FILE:/tmp/offset.dat}
-    history-file: ${HISTORY_FILE:/tmp/dbhistory.dat}
-

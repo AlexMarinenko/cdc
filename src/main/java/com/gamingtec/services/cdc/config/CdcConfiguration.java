@@ -17,8 +17,7 @@ public class CdcConfiguration {
         log.info("CDC Configuration: {}", configuration );
         return io.debezium.config.Configuration.create()
                 .with("connector.class", "io.debezium.connector.sqlserver.SqlServerConnector")
-                .with("offset.storage", "org.apache.kafka.connect.storage.FileOffsetBackingStore")
-                .with("offset.storage.file.filename", configuration.getOffsetFile())
+                .with("offset.storage", "org.apache.kafka.connect.storage.MemoryOffsetBackingStore")
                 .with("database.hostname", configuration.getHost())
                 .with("database.port", configuration.getPort())
                 .with("database.user", configuration.getUser())
@@ -27,8 +26,7 @@ public class CdcConfiguration {
                 .with("table.include.list", configuration.getTablesToTrack())
                 .with("table.whitelist", configuration.getTablesToTrack())
                 .with("database.names", configuration.getDbname())
-                .with("schema.history.internal", "io.debezium.storage.file.history.FileSchemaHistory")
-                .with("schema.history.internal.file.filename", configuration.getHistoryFile())
+                .with("schema.history.internal", "io.debezium.relational.history.MemorySchemaHistory")
                 .with("topic.prefix", "omega")
                 .with("snapshot.mode", "schema_only")
 
