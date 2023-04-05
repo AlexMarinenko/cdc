@@ -11,8 +11,12 @@ import io.debezium.embedded.Connect;
 import io.debezium.engine.DebeziumEngine;
 import io.debezium.engine.RecordChangeEvent;
 import io.debezium.engine.format.ChangeEventFormat;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
+import java.io.IOException;
 import java.util.Map;
-import lombok.RequiredArgsConstructor;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.connect.data.Field;
 import org.apache.kafka.connect.data.Struct;
@@ -26,12 +30,19 @@ public class DebeziumListener {
 
     private final DebeziumEngine<RecordChangeEvent<SourceRecord>> debeziumEngine;
 
+    private final Executor executor = Executors.newSingleThreadExecutor();
+
     public DebeziumListener(Configuration debeziumConfiguration) {
 
         this.debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect.class))
                 .using(debeziumConfiguration.asProperties())
                 .notifying(this::handleChangeEvent)
                 .build();
+    }
+
+    @PostConstruct
+    private void start() {
+        this.executor.execute(debeziumEngine);
     }
 
     private void handleChangeEvent(RecordChangeEvent<SourceRecord> sourceRecordRecordChangeEvent) {
@@ -53,6 +64,13 @@ public class DebeziumListener {
 
                 log.info("Payload received: {}", payload);
             }
+        }
+    }
+
+    @PreDestroy
+    private void stop() throws IOException {
+        if (this.debeziumEngine != null) {
+            this.debeziumEngine.close();
         }
     }
 
